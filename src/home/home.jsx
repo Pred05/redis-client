@@ -5,31 +5,42 @@ import electron from 'electron';
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { redisList: {} }
+    this.state = { redisList: {} };
     electron.ipcRenderer.send('refreshDatasources');
-    electron.ipcRenderer.on('redis-localhost', (err, isOk) => {
-      console.log('Redis OK');
-      this.setState({ redisList: { redisLocalhost: isOk } });
+    electron.ipcRenderer.on('datasource', (err, datasourceList) => {
+      this.setState({ datasourceList });
     });
   }
 
-  getRedisServerIconStatus(key) {
-    if (this.state.redisList[key]) {
-      return (<i className="far fa-check-circle" style={{ color: 'green' }} />);
+  getRedisServerIconStatus(item) {
+    console.log(item.name);
+    if (item && item.datasource.connected) {
+      return (
+        <span>
+          <i className="far fa-check-circle" style={{ color: 'green' }} />
+          <Link to="/data-table" className="button is-small" >
+            <span className="icon is-small" ><i className="fas fa-sign-in-alt" /></span>
+          </Link>
+        </span>
+      );
     }
     return (<i className="far fa-times-circle" style={{ color: 'red' }} />);
   }
 
   listRedisServer() {
-    return Object.keys(this.state.redisList).map((item) => {
-      console.log(item);
-      return (
-        <tr>
-          <td>{item}</td>
-          <td>{item}</td>
+    if (this.state.datasourceList) {
+      return Object.values(this.state.datasourceList).map(item => (
+        <tr key={`${item.url}:${item.port}`}>
+          <td>{item.name}</td>
+          <td>{item.url}:{item.port}</td>
           <td>{this.getRedisServerIconStatus(item)}</td>
-        </tr>);
-    });
+        </tr>));
+    }
+    return (
+      <tr key="unknow">
+        <td colSpan="3" className="has-text-centered">No datasource</td>
+      </tr>
+    );
   }
 
   render() {
@@ -65,7 +76,7 @@ export default class Home extends React.Component {
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>Url</th>
+                    <th>Url:Port</th>
                     <th>Status</th>
                   </tr>
                 </thead>

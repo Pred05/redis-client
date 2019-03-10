@@ -2,6 +2,34 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
 import * as redis from 'redis';
+import Datastore from 'nedb';
+import * as DatasourceUtil from './util/datasource-util';
+
+// Datastore
+const datasources = new Datastore({ filename: 'datasources.db', autoload: true });
+
+
+const datasourceList = {
+  'localhost:6379': {
+    name: 'Localhost default database',
+    url: 'localhost',
+    port: '6379',
+    datasource: redis.createClient(),
+  },
+};
+
+datasources.find({}, (err, docs) => {
+  if (docs) {
+    docs.forEach((item) => {
+      datasourceList[DatasourceUtil.getDatasourceKey(item)] = {
+        name: item.name,
+        url: item.url,
+        port: item.port,
+        datasource: redis.createClient({ host: item.url, port: item.port }),
+      };
+    });
+  }
+});
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -35,36 +63,32 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  // Redis initialisation
-  const redisClient = redis.createClient();
-
-  redisClient.on('connect', () => {
-    console.log('Redis connection OK');
-    mainWindow.webContents.send('redis-localhost', true);
+  Object.values(datasourceList).forEach((item) => {
+    item.datasource.on('error', (err) => {
+      console.log('Error {}', err);
+      if (err.code === 'ECONNREFUSED') {
+        mainWindow.webContents.send('datasource', datasourceList);
+      }
+    });
   });
 
-  redisClient.on('error', (err) => {
-    console.log('Error {}', err);
-    if (err.code === 'ECONNREFUSED') {
-      mainWindow.webContents.send('redis-localhost', false);
-    }
-  });
-
-  redisClient.on('disconnect', () => {
-    console.log('Redis connection NOK');
-    mainWindow.webContents.send('redis-localhost', false);
-  });
-
-  ipcMain.on('add', (evt, args) => {
+  /* ipcMain.on('add', (evt, args) => {
     redisClient.SET(args.key, args.value);
     redisClient.KEYS('*', (err, replies) => {
       console.log(replies);
       mainWindow.webContents.send('added', replies);
     });
-  });
+  }); */
 
   ipcMain.on('refreshDatasources', () => {
-    mainWindow.webContents.send('redis-localhost', redisClient.connected);
+    mainWindow.webContents.send('datasource', datasourceList);
+  });
+
+  ipcMain.on('refreshData', () => {
+    mainWindow.webContents.send('data', [
+      { key: 'key1', value: 'value1' },
+      { key: 'key2', value: 'value2' },
+    ]);
   });
 };
 
