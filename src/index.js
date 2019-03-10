@@ -1,6 +1,7 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
+import * as redis from 'redis';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -32,6 +33,38 @@ const createWindow = async () => {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
+  });
+
+  // Redis initialisation
+  const redisClient = redis.createClient();
+
+  redisClient.on('connect', () => {
+    console.log('Redis connection OK');
+    mainWindow.webContents.send('redis-localhost', true);
+  });
+
+  redisClient.on('error', (err) => {
+    console.log('Error {}', err);
+    if (err.code === 'ECONNREFUSED') {
+      mainWindow.webContents.send('redis-localhost', false);
+    }
+  });
+
+  redisClient.on('disconnect', () => {
+    console.log('Redis connection NOK');
+    mainWindow.webContents.send('redis-localhost', false);
+  });
+
+  ipcMain.on('add', (evt, args) => {
+    redisClient.SET(args.key, args.value);
+    redisClient.KEYS('*', (err, replies) => {
+      console.log(replies);
+      mainWindow.webContents.send('added', replies);
+    });
+  });
+
+  ipcMain.on('refreshDatasources', () => {
+    mainWindow.webContents.send('redis-localhost', redisClient.connected);
   });
 };
 

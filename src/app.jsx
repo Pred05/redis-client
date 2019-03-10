@@ -1,30 +1,38 @@
 import React from 'react';
-import * as redis from 'redis';
+import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import electron from 'electron';
+import Home from './home/home';
+import DatasourceForm from './data/datasource-form';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    const redisClient = redis.createClient({ host: 'localhost' });
 
-    redisClient.on('error', (err) => {
-      console.log('Error {}', err);
+    this.state = {
+      keys: [],
+    };
+
+    electron.ipcRenderer.on('added', (evt, items) => {
+      console.log(items);
+      this.setState({ keys: items });
     });
 
-    this.state = { redis: redisClient };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    electron.ipcRenderer.send('add', { key: e.target.key.value, value: e.target.value.value });
   }
 
   render() {
     return (
-      <section className="section">
-        <div className="container">
-          <h1 className="title">
-            Hello World
-          </h1>
-          <p className="subtitle">
-            My first website with <strong>Bulma</strong>!
-          </p>
-        </div>
-      </section>
+      <Router>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/datasource-form" component={DatasourceForm} />
+        </Switch>
+      </Router>
     );
   }
 }
