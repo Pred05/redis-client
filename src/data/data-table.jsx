@@ -1,5 +1,6 @@
 import React from 'react';
 import electron from 'electron';
+import { Link } from 'react-router-dom';
 
 export default class DataTable extends React.Component {
   constructor(props) {
@@ -15,7 +16,7 @@ export default class DataTable extends React.Component {
 
   render() {
     return (
-      <section className="section">
+      <section className="section column is-fullheight">
         <table className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
           <thead>
             <tr>

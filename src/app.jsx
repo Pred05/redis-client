@@ -3,7 +3,7 @@ import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import electron from 'electron';
 import Home from './home/home';
 import DatasourceForm from './data/datasource-form';
-import DataTable from './data/data-table';
+import DataMain from './data/data-main';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -32,7 +32,7 @@ export default class App extends React.Component {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/datasource-form" component={DatasourceForm} />
-          <Route path="/data-table" component={DataTable} />
+          <Route path="/data-table" component={DataMain} />
         </Switch>
       </Router>
     );
