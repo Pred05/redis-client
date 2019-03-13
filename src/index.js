@@ -4,6 +4,7 @@ import { enableLiveReload } from 'electron-compile';
 import * as redis from 'redis';
 import Datastore from 'nedb';
 import * as DatasourceUtil from './util/datasource-util';
+import DataEvent from './event/data';
 
 // Datastore
 const datasources = new Datastore({ filename: 'datasources.db', autoload: true });
@@ -80,17 +81,8 @@ const createWindow = async () => {
       mainWindow.webContents.send('added', replies);
     });
   }); */
+  DataEvent(mainWindow.webContents, ipcMain, datasourceList);
 
-  ipcMain.on('refreshDatasources', () => {
-    mainWindow.webContents.send('datasource', datasourceList);
-  });
-
-  ipcMain.on('refreshData', (evt, args) => {
-    datasourceList[args.key].datasource.multi(args.multi).exec((err, replies) => {
-      console.log(replies);
-      mainWindow.webContents.send('data', replies);
-    });
-  });
 };
 
 // This method will be called when Electron has finished

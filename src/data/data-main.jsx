@@ -1,13 +1,20 @@
 import React from 'react';
 import LeftMenu from '../navigation/left-menu';
-import DataKeys from './data-keys';
+import DataTable from './data-table';
 import DataTopBar from './data-top-bar';
 import DataRequestBar from './data-request-bar';
+import electron from 'electron';
 
 export default class DataMain extends React.Component {
   constructor(props) {
     super(props);
     console.log(props.match.params.datasourcekey);
+
+    this.state = { keyValue: '' };
+
+    electron.ipcRenderer.on('key-value', (err, keyValue) => {
+      this.setState({ keyValue });
+    });
   }
 
   render() {
@@ -19,11 +26,11 @@ export default class DataMain extends React.Component {
           <div className="column is-2 is-fullheight">
             <LeftMenu />
           </div>
-          <div className="column is-4 box is-fullheight">
-            <DataKeys />
+          <div className="column is-4 is-fullheight">
+            <DataTable datasourcekey={this.props.match.params.datasourcekey} />
           </div>
           <div className="column">
-            <p>Result</p>
+            <textarea className="textarea" placeholder="Value" value={this.state.keyValue} />
           </div>
         </div>
       </section>
