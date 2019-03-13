@@ -6,7 +6,7 @@ export default class LeftMenu extends React.Component {
 
   render() {
     return (
-      <aside className="menu column is-2 is-fullheight">
+      <aside className="menu">
         <ul className="menu-list">
           <li><Link to="/">Back</Link></li>
         </ul>

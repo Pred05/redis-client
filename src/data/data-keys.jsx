@@ -1,7 +1,7 @@
 import React from 'react';
 import electron from 'electron';
 
-export default class DataTable extends React.Component {
+export default class DataKeys extends React.Component {
   constructor(props) {
     super(props);
     console.log('DataTable');
@@ -15,18 +15,11 @@ export default class DataTable extends React.Component {
 
   render() {
     return (
-      <table className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-        <thead>
-          <tr>
-            <th>Key</th>
-            <th>Value</th>
-          </tr>
-        </thead>
+      <table className="table is-striped is-narrow is-hoverable is-fullwidth">
         <tbody>
           {this.state.keys.map(item => (
             <tr key={item.key}>
               <td>{item.key}</td>
-              <td>{item.value}</td>
             </tr>
           ))}
         </tbody>
