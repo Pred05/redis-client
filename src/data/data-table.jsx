@@ -6,7 +6,7 @@ export default class DataTable extends React.Component {
     super(props);
     console.log('DataTable');
     this.state = { keys: [] };
-    electron.ipcRenderer.send('refreshData');
+    electron.ipcRenderer.send('refreshData', {key: props.datasourcekey});
 
     electron.ipcRenderer.on('data', (err, keys) => {
       this.setState({ keys });

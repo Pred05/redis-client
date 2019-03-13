@@ -14,7 +14,6 @@ export default class App extends React.Component {
     };
 
     electron.ipcRenderer.on('added', (evt, items) => {
-      console.log(items);
       this.setState({ keys: items });
     });
 
@@ -32,7 +31,7 @@ export default class App extends React.Component {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/datasource-form" component={DatasourceForm} />
-          <Route path="/data-table" component={DataMain} />
+          <Route path="/data-main/:datasourcekey" component={DataMain} />
         </Switch>
       </Router>
     );

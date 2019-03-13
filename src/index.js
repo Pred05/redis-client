@@ -72,6 +72,7 @@ const createWindow = async () => {
     });
   });
 
+
   /* ipcMain.on('add', (evt, args) => {
     redisClient.SET(args.key, args.value);
     redisClient.KEYS('*', (err, replies) => {
@@ -84,11 +85,11 @@ const createWindow = async () => {
     mainWindow.webContents.send('datasource', datasourceList);
   });
 
-  ipcMain.on('refreshData', () => {
-    mainWindow.webContents.send('data', [
-      { key: 'key1', value: 'value1' },
-      { key: 'key2', value: 'value2' },
-    ]);
+  ipcMain.on('refreshData', (evt, args) => {
+    datasourceList[args.key].datasource.multi(args.multi).exec((err, replies) => {
+      console.log(replies);
+      mainWindow.webContents.send('data', replies);
+    });
   });
 };
 

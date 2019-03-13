@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import electron from 'electron';
+import * as DatasourceUtil from '../util/datasource-util';
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -15,10 +16,11 @@ export default class Home extends React.Component {
   getRedisServerIconStatus(item) {
     console.log(item.name);
     if (item && item.datasource.connected) {
+      const datasourceKey = DatasourceUtil.getDatasourceKey(item);
       return (
         <span>
           <i className="far fa-check-circle" style={{ color: 'green' }} />
-          <Link to="/data-table" className="button is-small" >
+          <Link to={`/data-main/${datasourceKey}`} className="button is-small" >
             <span className="icon is-small" ><i className="fas fa-sign-in-alt" /></span>
           </Link>
         </span>
