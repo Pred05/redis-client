@@ -21,7 +21,7 @@ export default class DataMain extends React.Component {
     return (
       <section className="container is-fullheight">
         <DataTopBar />
-        <DataRequestBar />
+        <DataRequestBar datasourcekey={this.props.match.params.datasourcekey} />
         <div className="columns is-gapless">
           <div className="column is-2 is-fullheight">
             <LeftMenu />

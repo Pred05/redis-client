@@ -4,7 +4,7 @@ import { enableLiveReload } from 'electron-compile';
 import * as redis from 'redis';
 import Datastore from 'nedb';
 import * as DatasourceUtil from './util/datasource-util';
-import DataEvent from './event/data';
+import DataEvent from './api/data';
 
 // Datastore
 const datasources = new Datastore({ filename: 'datasources.db', autoload: true });
