@@ -8,11 +8,12 @@ export default class DataTable extends React.Component {
     electron.ipcRenderer.send('refreshData', { key: props.datasourcekey, multi: ['keys', '*'] });
 
     electron.ipcRenderer.on('data', (err, keys) => {
-      this.setState({ keys: keys, addKey: ''});
+      this.setState({ keys, addKey: '' });
     });
 
     this.keyClick = this.keyClick.bind(this);
     this.add = this.add.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   render() {
@@ -27,7 +28,7 @@ export default class DataTable extends React.Component {
           <tr>
             <div className="field has-addons">
               <div className="control is-expanded">
-                <input className="input" type="text" placeholder="Add key" value={this.state.addKey} />
+                <input className="input" type="text" name="addKey" placeholder="Add key" value={this.state.addKey} onChange={this.handleChange} />
               </div>
               <div className="control">
                 <a className="button" onClick={this.add}>
@@ -53,5 +54,11 @@ export default class DataTable extends React.Component {
     console.log(this.state.addKey);
     electron.ipcRenderer.send('addKey', { datasourcekey: this.props.datasourcekey, key: this.state.addKey });
     e.preventDefault();
+  }
+
+  handleChange(event) {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
   }
 }
