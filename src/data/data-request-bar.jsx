@@ -5,10 +5,13 @@ export default class DataRequestBar extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { request: '' };
+    this.state = { request: 'KEYS *' };
 
     this.handleRequest = this.handleRequest.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+
+    this.handleRequest();
   }
 
   render() {
@@ -22,6 +25,7 @@ export default class DataRequestBar extends React.Component {
                 name="request"
                 className="input"
                 placeholder="Redis request"
+                onKeyPress={this.handleKeyPress}
                 onChange={this.handleChange}
                 value={this.state.request}
               />
@@ -37,8 +41,13 @@ export default class DataRequestBar extends React.Component {
     );
   }
 
+  handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      this.handleRequest();
+    }
+  }
+
   handleRequest() {
-    console.log(this.state.request);
     electron.ipcRenderer.send('refreshData', { key: this.props.datasourcekey, request: this.state.request });
   }
 
