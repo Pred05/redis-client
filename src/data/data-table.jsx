@@ -3,6 +3,7 @@ import electron from 'electron';
 import AceEditor from 'react-ace';
 import 'brace/mode/javascript';
 import 'brace/theme/github';
+import 'brace/ext/beautify';
 
 export default class DataTable extends React.Component {
   constructor(props) {
@@ -15,17 +16,17 @@ export default class DataTable extends React.Component {
     });
 
     electron.ipcRenderer.on('key-value', (err, keyValue) => {
-      this.setState({ keyValue, showKeyValue: true });
+      this.setState({ keyValue: , showKeyValue: true });
     });
 
     this.keyClick = this.keyClick.bind(this);
     this.add = this.add.bind(this);
-    this.onChange = this.onChange.bind(this);
+    this.onCodeChange = this.onCodeChange.bind(this);
   }
 
-  onChange(event) {
+  onCodeChange(code) {
     this.setState({
-      [event.target.name]: event.target.value
+      keyValue: code
     });
   }
 
@@ -79,7 +80,7 @@ export default class DataTable extends React.Component {
               <AceEditor
                 mode="javascript"
                 theme="github"
-                onChange={this.onChange}
+                onChange={this.onCodeChange}
                 value={this.state.keyValue}
                 name="ace-main"
                 width="100%"
