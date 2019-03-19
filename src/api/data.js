@@ -11,7 +11,10 @@ module.exports = (webContents, ipcMain, datasourceList) => {
 
       console.log(command);
       datasourceList[args.key].datasource.MULTI([command]).exec((err, replies) => {
-        webContents.send('data', replies[0]);
+        webContents.send('data', {
+          type: RequestUtil.getCommandType(command),
+          data: replies[0]
+        });
       });
     } catch (e) {
       console.log(e);

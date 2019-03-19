@@ -3,7 +3,6 @@ import electron from 'electron';
 import AceEditor from 'react-ace';
 import 'brace/mode/javascript';
 import 'brace/theme/github';
-import 'brace/ext/beautify';
 
 export default class DataTable extends React.Component {
   constructor(props) {
@@ -12,11 +11,11 @@ export default class DataTable extends React.Component {
     electron.ipcRenderer.send('refreshData', { key: props.datasourcekey, multi: ['keys', '*'] });
 
     electron.ipcRenderer.on('data', (err, data) => {
-      this.setState({ data, addKey: '', showKeyValue: !Array.isArray(data) });
+      this.setState({ data, addKey: '', showKeyValue: data.length === 1 });
     });
 
     electron.ipcRenderer.on('key-value', (err, keyValue) => {
-      this.setState({ keyValue: , showKeyValue: true });
+      this.setState({ keyValue, showKeyValue: true });
     });
 
     this.keyClick = this.keyClick.bind(this);
@@ -43,7 +42,7 @@ export default class DataTable extends React.Component {
   }
 
   renderTable() {
-    if (!this.state.data || this.state.data.length <= 1) {
+    if (!this.state.data || this.state.data.length < 1) {
       return (<p className="column">No result</p>);
     }
 
