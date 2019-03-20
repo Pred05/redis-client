@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import electron from 'electron';
-import * as DatasourceUtil from '../util/datasource-util';
+import * as DatasourceUtil from '../api/util/datasource-util';
 
 export default class Home extends React.Component {
   constructor(props) {

@@ -1,36 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
-import * as redis from 'redis';
-import Datastore from 'nedb';
-import * as DatasourceUtil from './util/datasource-util';
 import DataEvent from './api/data';
-
-// Datastore
-const datasources = new Datastore({ filename: 'datasources.db', autoload: true });
-
-
-const datasourceList = {
-  'localhost:6379': {
-    name: 'Localhost default database',
-    url: 'localhost',
-    port: '6379',
-    datasource: redis.createClient(),
-  },
-};
-
-datasources.find({}, (err, docs) => {
-  if (docs) {
-    docs.forEach((item) => {
-      datasourceList[DatasourceUtil.getDatasourceKey(item)] = {
-        name: item.name,
-        url: item.url,
-        port: item.port,
-        datasource: redis.createClient({ host: item.url, port: item.port }),
-      };
-    });
-  }
-});
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -43,8 +14,8 @@ if (isDevMode) enableLiveReload({ strategy: 'react-hmr' });
 const createWindow = async () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 800
   });
 
   // and load the index.html of the app.
@@ -82,7 +53,6 @@ const createWindow = async () => {
     });
   }); */
   DataEvent(mainWindow.webContents, ipcMain, datasourceList);
-
 };
 
 // This method will be called when Electron has finished

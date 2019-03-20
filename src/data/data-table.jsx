@@ -15,10 +15,6 @@ export default class DataTable extends React.Component {
       this.setState({ data, addKey: '', showKeyValue: !Array.isArray(data) });
     });
 
-    electron.ipcRenderer.on('key-value', (err, keyValue) => {
-      this.setState({ keyValue: , showKeyValue: true });
-    });
-
     this.keyClick = this.keyClick.bind(this);
     this.add = this.add.bind(this);
     this.onCodeChange = this.onCodeChange.bind(this);

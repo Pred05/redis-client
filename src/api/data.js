@@ -26,6 +26,7 @@ module.exports = (webContents, ipcMain, datasourceList) => {
 
   ipcMain.on('addKey', (evt, args) => {
     datasourceList[args.datasourcekey].datasource.SET(args.key, '');
+    // TODO: pass request in argument to update value
     datasourceList[args.datasourcekey].datasource.MULTI([['KEYS', '*']]).exec((err, replies) => {
       webContents.send('data', replies);
     });
