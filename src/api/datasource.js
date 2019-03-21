@@ -12,7 +12,7 @@ const datasourceInfoList = {
     name: 'Localhost default database',
     host: 'localhost',
     port: '6379',
-    datasource_status: 'OFF',
+    datasourceStatus: 'OFF',
   },
 };
 
@@ -24,9 +24,25 @@ function createRedisClient(host, port) {
   return redisClient;
 }
 
+function handlRedisClientEvent(redisClient, mainWindow) {
+  redisClient.on('error', (err) => {
+    console.log('Error address=', redisClient.address, ' error=', err);
+    if (err.code === 'ECONNREFUSED') {
+      datasourceInfoList[redisClient.address].datasourceStatus = 'OFF';
+      mainWindow.webContents.send('datasource', datasourceInfoList);
+    }
+  });
+
+  redisClient.on('connect', () => {
+    console.log('Connect address=', redisClient.address);
+    datasourceInfoList[redisClient.address].datasourceStatus = 'ON';
+    mainWindow.webContents.send('datasource', datasourceInfoList);
+  });
+}
+
 
 module.exports = {
-  init: () => {
+  init: (mainWindow) => {
     // Load saved datasource
     dbDatasources.find({}, (err, docs) => {
       if (docs) {
@@ -35,21 +51,22 @@ module.exports = {
             name: item.name,
             host: item.host,
             port: item.port,
-            datasource_status: 'OFF',
+            datasourceStatus: 'OFF',
           };
         });
       }
     });
 
     // Create all datasource
-    Object.keys(datasourceInfoList, (keys) => {
-      keys.forEach((key) => {
-        const item = datasourceInfoList[key];
-        createRedisClient(item.host, item.port);
-      });
+    Object.keys(datasourceInfoList).forEach((key) => {
+      const item = datasourceInfoList[key];
+      const redisClient = createRedisClient(item.host, item.port);
+      handlRedisClientEvent(redisClient, mainWindow);
     });
+
+    return datasourceInfoList;
   },
-  addDatasource: (name, host, port) => {
+  addDatasource: (mainWindow, name, host, port) => {
     dbDatasources.insert({ name, host, port }, (err, doc) => {
       if (err) {
         // TODO: handle error
@@ -59,10 +76,11 @@ module.exports = {
         name: doc.name,
         host: doc.host,
         port: doc.port,
-        datasource_status: 'OFF',
+        datasourceStatus: 'OFF',
       };
 
-      createRedisClient(doc.host, doc.port);
+      const redisClient = createRedisClient(doc.host, doc.port);
+      handlRedisClientEvent(redisClient, mainWindow);
     });
   },
   getDatasourceInfoList: () => datasourceInfoList,

@@ -8,11 +8,15 @@ import 'brace/ext/beautify';
 export default class DataTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { data: [], addKey: '', keyValue: '', showKeyValue: false };
+    this.state = { data: {}, addKey: '', keyValue: ''};
     electron.ipcRenderer.send('refreshData', { key: props.datasourcekey, multi: ['keys', '*'] });
 
     electron.ipcRenderer.on('data', (err, data) => {
-      this.setState({ data, addKey: '', showKeyValue: !Array.isArray(data) });
+      this.setState({ data, addKey: ''});
+    });
+
+    electron.ipcRenderer.on('key-value', (err, keyValue) => {
+      this.setState({ keyValue, showKeyValue: true });
     });
 
     this.keyClick = this.keyClick.bind(this);
@@ -39,7 +43,7 @@ export default class DataTable extends React.Component {
   }
 
   renderTable() {
-    if (!this.state.data || this.state.data.length <= 1) {
+    if (!this.state.data || this.state.data.length < 1) {
       return (<p className="column">No result</p>);
     }
 

@@ -1,8 +1,10 @@
 import * as RequestUtil from './util/request-util';
 
-module.exports = (webContents, ipcMain, datasourceList) => {
+module.exports = (webContents, ipcMain, datasource) => {
   ipcMain.on('refreshDatasources', () => {
-    webContents.send('datasource', datasourceList);
+    console.log('refreshDatasources');
+    console.log(datasource.getDatasourceInfoList());
+    webContents.send('datasource', datasource.getDatasourceInfoList());
   });
 
   ipcMain.on('refreshData', (evt, args) => {
@@ -10,8 +12,11 @@ module.exports = (webContents, ipcMain, datasourceList) => {
       const command = RequestUtil.getMultiFromString(args.request);
 
       console.log(command);
-      datasourceList[args.key].datasource.MULTI([command]).exec((err, replies) => {
-        webContents.send('data', replies[0]);
+      datasource.getDatasource(args.key).MULTI([command]).exec((err, replies) => {
+        webContents.send('data', {
+          type: RequestUtil.getCommandType(command),
+          data: replies[0]
+        });
       });
     } catch (e) {
       console.log(e);
@@ -19,16 +24,19 @@ module.exports = (webContents, ipcMain, datasourceList) => {
   });
 
   ipcMain.on('key', (evt, args) => {
-    datasourceList[args.datasourcekey].datasource.GET(args.key, (err, replies) => {
+    datasource.getDatasource(args.datasourcekey).GET(args.key, (err, replies) => {
       webContents.send('key-value', replies);
     });
   });
 
   ipcMain.on('addKey', (evt, args) => {
-    datasourceList[args.datasourcekey].datasource.SET(args.key, '');
+    datasource.getDatasource(args.datasourcekey).SET(args.key, '');
     // TODO: pass request in argument to update value
-    datasourceList[args.datasourcekey].datasource.MULTI([['KEYS', '*']]).exec((err, replies) => {
-      webContents.send('data', replies);
+    datasource.getDatasource(args.datasourcekey).MULTI([['KEYS', '*']]).exec((err, replies) => {
+      webContents.send('data', {
+        type: 'key',
+        data: replies
+      });
     });
   });
 };

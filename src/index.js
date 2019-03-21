@@ -1,7 +1,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import installExtension, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
-import DataEvent from './api/data';
+import dataEvent from './api/data';
+import datasource from './api/datasource';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -35,16 +36,6 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  Object.values(datasourceList).forEach((item) => {
-    item.datasource.on('error', (err) => {
-      console.log('Error {}', err);
-      if (err.code === 'ECONNREFUSED') {
-        mainWindow.webContents.send('datasource', datasourceList);
-      }
-    });
-  });
-
-
   /* ipcMain.on('add', (evt, args) => {
     redisClient.SET(args.key, args.value);
     redisClient.KEYS('*', (err, replies) => {
@@ -52,7 +43,8 @@ const createWindow = async () => {
       mainWindow.webContents.send('added', replies);
     });
   }); */
-  DataEvent(mainWindow.webContents, ipcMain, datasourceList);
+  datasource.init(mainWindow);
+  dataEvent(mainWindow.webContents, ipcMain, datasource);
 };
 
 // This method will be called when Electron has finished

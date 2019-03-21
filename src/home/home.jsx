@@ -14,9 +14,8 @@ export default class Home extends React.Component {
   }
 
   getRedisServerIconStatus(item) {
-    console.log(item.name);
-    if (item && item.datasource.connected) {
-      const datasourceKey = DatasourceUtil.getDatasourceKey(item);
+    if (item && item.datasourceStatus === 'ON') {
+      const datasourceKey = DatasourceUtil.getDatasourceKeyByDatasource(item);
       return (
         <span>
           <i className="far fa-check-circle" style={{ color: 'green' }} />
@@ -34,7 +33,7 @@ export default class Home extends React.Component {
       return Object.values(this.state.datasourceList).map(item => (
         <tr key={`${item.url}:${item.port}`}>
           <td>{item.name}</td>
-          <td>{item.url}:{item.port}</td>
+          <td>{item.host}:{item.port}</td>
           <td>{this.getRedisServerIconStatus(item)}</td>
         </tr>));
     }
@@ -78,7 +77,7 @@ export default class Home extends React.Component {
                 <thead>
                   <tr>
                     <th>Name</th>
-                    <th>Url:Port</th>
+                    <th>Host:Port</th>
                     <th>Status</th>
                   </tr>
                 </thead>
