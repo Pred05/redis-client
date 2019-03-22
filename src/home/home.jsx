@@ -64,9 +64,9 @@ export default class Home extends React.Component {
                 </Link>
               </div>
               <div className="tile is-parent">
-                <a className="tile is-child box">
+                <a className="tile is-child box" disabled>
                   <p className="title">
-                    <i className="fas fa-database" /> Start new redis database
+                    <i className="fas fa-database" /> Start new redis database (coming soon)
                   </p>
                 </a>
               </div>

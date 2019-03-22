@@ -40,6 +40,24 @@ function handlRedisClientEvent(redisClient, mainWindow) {
   });
 }
 
+function addDatasource(mainWindow, name, host, port) {
+  dbDatasources.insert({ name, host, port }, (err, doc) => {
+    if (err) {
+      // TODO: handle error
+    }
+
+    datasourceInfoList[DatasourceUtil.getDatasourceKeyByDatasource(doc)] = {
+      name: doc.name,
+      host: doc.host,
+      port: doc.port,
+      datasourceStatus: 'OFF',
+    };
+
+    const redisClient = createRedisClient(doc.host, doc.port);
+    handlRedisClientEvent(redisClient, mainWindow);
+  });
+}
+
 
 module.exports = {
   init: (mainWindow) => {
@@ -64,25 +82,14 @@ module.exports = {
       handlRedisClientEvent(redisClient, mainWindow);
     });
 
+    // Datasources events
+    mainWindow.ipcMain.on('submitNewDatasource', (evt, args) => {
+
+    });
+
     return datasourceInfoList;
   },
-  addDatasource: (mainWindow, name, host, port) => {
-    dbDatasources.insert({ name, host, port }, (err, doc) => {
-      if (err) {
-        // TODO: handle error
-      }
-
-      datasourceInfoList[DatasourceUtil.getDatasourceKeyByDatasource(doc)] = {
-        name: doc.name,
-        host: doc.host,
-        port: doc.port,
-        datasourceStatus: 'OFF',
-      };
-
-      const redisClient = createRedisClient(doc.host, doc.port);
-      handlRedisClientEvent(redisClient, mainWindow);
-    });
-  },
+  addDatasource,
   getDatasourceInfoList: () => datasourceInfoList,
   getDatasource: key => datasourceList[key],
 };
