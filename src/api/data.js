@@ -12,6 +12,7 @@ module.exports = (webContents, ipcMain, datasource) => {
       const command = RequestUtil.getMultiFromString(args.request);
 
       console.log(command);
+      console.log(`key: ${args.key}`);
       datasource.getDatasource(args.key).MULTI([command]).exec((err, replies) => {
         webContents.send('data', {
           type: RequestUtil.getCommandType(command),

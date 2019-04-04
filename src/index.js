@@ -43,7 +43,7 @@ const createWindow = async () => {
       mainWindow.webContents.send('added', replies);
     });
   }); */
-  datasource.init(mainWindow);
+  datasource.init(mainWindow, ipcMain);
   dataEvent(mainWindow.webContents, ipcMain, datasource);
 };
 

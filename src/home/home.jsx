@@ -8,9 +8,14 @@ export default class Home extends React.Component {
     super(props);
     this.state = { redisList: {} };
     electron.ipcRenderer.send('refreshDatasources');
-    electron.ipcRenderer.on('datasource', (err, datasourceList) => {
+    this.datasourceListener = (err, datasourceList) => {
       this.setState({ datasourceList });
-    });
+    };
+    electron.ipcRenderer.on('datasource', this.datasourceListener);
+  }
+
+  componentWillUnmount() {
+    electron.ipcRenderer.removeListener('datasource', this.datasourceListener);
   }
 
   getRedisServerIconStatus(item) {
@@ -34,7 +39,14 @@ export default class Home extends React.Component {
         <tr key={`${item.url}:${item.port}`}>
           <td>{item.name}</td>
           <td>{item.host}:{item.port}</td>
-          <td>{this.getRedisServerIconStatus(item)}</td>
+          <td>
+            {this.getRedisServerIconStatus(item)}
+            <span>
+              <a className="button is-small" >
+                <span className="icon is-small" ><i className="fas fa-trash-alt" /></span>
+              </a>
+            </span>
+          </td>
         </tr>));
     }
     return (

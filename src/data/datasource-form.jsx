@@ -45,7 +45,7 @@ export default class DatasourceForm extends React.Component {
     }
 
     electron.ipcRenderer.send('submitNewDatasource', {
-      databaseName: this.state.databaseName,
+      name: this.state.databaseName,
       host: this.state.host,
       port: this.state.port,
     });

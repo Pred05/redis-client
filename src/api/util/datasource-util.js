@@ -1,4 +1,4 @@
 module.exports = {
-  getDatasourceKeyByDatasource: datasource => `${datasource.url}:${datasource.port}`,
+  getDatasourceKeyByDatasource: datasource => `${datasource.host}:${datasource.port}`,
   getDatasourceKeyByUrlAndPort: (url, port) => `${url}:${port}`,
 };

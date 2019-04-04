@@ -60,7 +60,7 @@ function addDatasource(mainWindow, name, host, port) {
 
 
 module.exports = {
-  init: (mainWindow) => {
+  init: (mainWindow, ipcMain) => {
     // Load saved datasource
     dbDatasources.find({}, (err, docs) => {
       if (docs) {
@@ -83,13 +83,16 @@ module.exports = {
     });
 
     // Datasources events
-    mainWindow.ipcMain.on('submitNewDatasource', (evt, args) => {
-
+    ipcMain.on('submitNewDatasource', (evt, args) => {
+      addDatasource(mainWindow, args.name, args.host, args.port);
     });
 
     return datasourceInfoList;
   },
   addDatasource,
+  deleteDatasource: (datasourceKey) => {
+
+  },
   getDatasourceInfoList: () => datasourceInfoList,
   getDatasource: key => datasourceList[key],
 };
