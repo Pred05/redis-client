@@ -12,10 +12,16 @@ export default class Home extends React.Component {
       this.setState({ datasourceList });
     };
     electron.ipcRenderer.on('datasource', this.datasourceListener);
+
+    this.deleteDatasource = this.deleteDatasource.bind(this);
   }
 
   componentWillUnmount() {
     electron.ipcRenderer.removeListener('datasource', this.datasourceListener);
+  }
+
+  deleteDatasource(item) {
+    electron.ipcRenderer.send('deleteDatasource', item);
   }
 
   getRedisServerIconStatus(item) {
@@ -42,7 +48,7 @@ export default class Home extends React.Component {
           <td>
             {this.getRedisServerIconStatus(item)}
             <span>
-              <a className="button is-small" >
+              <a className="button is-small" onClick={() => this.deleteDatasource(item)}>
                 <span className="icon is-small" ><i className="fas fa-trash-alt" /></span>
               </a>
             </span>

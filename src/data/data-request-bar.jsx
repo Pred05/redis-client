@@ -10,8 +10,6 @@ export default class DataRequestBar extends React.Component {
     this.handleRequest = this.handleRequest.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
-
-    this.handleRequest();
   }
 
   render() {

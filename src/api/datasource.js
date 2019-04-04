@@ -41,7 +41,7 @@ function handlRedisClientEvent(redisClient, mainWindow) {
 }
 
 function addDatasource(mainWindow, name, host, port) {
-  dbDatasources.insert({ name, host, port }, (err, doc) => {
+  dbDatasources.insert({ key: DatasourceUtil.getDatasourceKeyByUrlAndPort(host, port), name, host, port }, (err, doc) => {
     if (err) {
       // TODO: handle error
     }
@@ -58,6 +58,13 @@ function addDatasource(mainWindow, name, host, port) {
   });
 }
 
+function deleteDatasource(datasourceKey) {
+  delete datasourceInfoList[datasourceKey];
+  delete datasourceList[datasourceKey];
+  dbDatasources.remove({ key: datasourceKey }, {}, (err, numRemoved) => {
+    console.log(numRemoved);
+  });
+}
 
 module.exports = {
   init: (mainWindow, ipcMain) => {
@@ -87,12 +94,14 @@ module.exports = {
       addDatasource(mainWindow, args.name, args.host, args.port);
     });
 
+    ipcMain.on('deleteDatasource', (evt, args) => {
+      deleteDatasource(DatasourceUtil.getDatasourceKeyByDatasource(deleteDatasource));
+    });
+
     return datasourceInfoList;
   },
   addDatasource,
-  deleteDatasource: (datasourceKey) => {
-
-  },
+  deleteDatasource: deleteDatasource,
   getDatasourceInfoList: () => datasourceInfoList,
   getDatasource: key => datasourceList[key],
 };
