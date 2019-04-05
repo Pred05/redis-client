@@ -58,11 +58,11 @@ function addDatasource(mainWindow, name, host, port) {
   });
 }
 
-function deleteDatasource(datasourceKey) {
+function deleteDatasource(datasourceKey, mainWindow) {
   delete datasourceInfoList[datasourceKey];
   delete datasourceList[datasourceKey];
   dbDatasources.remove({ key: datasourceKey }, {}, (err, numRemoved) => {
-    console.log(numRemoved);
+    mainWindow.webContents.send('datasource', datasourceInfoList);
   });
 }
 
@@ -95,7 +95,7 @@ module.exports = {
     });
 
     ipcMain.on('deleteDatasource', (evt, args) => {
-      deleteDatasource(DatasourceUtil.getDatasourceKeyByDatasource(deleteDatasource));
+      deleteDatasource(DatasourceUtil.getDatasourceKeyByDatasource(args), mainWindow);
     });
 
     return datasourceInfoList;

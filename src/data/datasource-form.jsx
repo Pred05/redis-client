@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, R } from 'react-router-dom';
 import electron from 'electron';
 
 export default class DatasourceForm extends React.Component {
@@ -49,6 +49,7 @@ export default class DatasourceForm extends React.Component {
       host: this.state.host,
       port: this.state.port,
     });
+    this.props.history.push('/');
   }
 
   handleChange(event) {

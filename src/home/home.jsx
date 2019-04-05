@@ -39,6 +39,20 @@ export default class Home extends React.Component {
     return (<i className="far fa-times-circle" style={{ color: 'red' }} />);
   }
 
+  getActionButton(item) {
+    const actions = [];
+    if (!(item.host === 'localhost' && item.port === '6379')) {
+      actions.push((
+        <span key={`trash-${item.host}:${item.port}`}>
+          <a className="button is-small" onClick={() => this.deleteDatasource(item)}>
+            <span className="icon is-small" ><i className="fas fa-trash-alt" /></span>
+          </a>
+        </span>
+      ));
+    }
+    return actions;
+  }
+
   listRedisServer() {
     if (this.state.datasourceList) {
       return Object.values(this.state.datasourceList).map(item => (
@@ -47,11 +61,7 @@ export default class Home extends React.Component {
           <td>{item.host}:{item.port}</td>
           <td>
             {this.getRedisServerIconStatus(item)}
-            <span>
-              <a className="button is-small" onClick={() => this.deleteDatasource(item)}>
-                <span className="icon is-small" ><i className="fas fa-trash-alt" /></span>
-              </a>
-            </span>
+            {this.getActionButton(item)}
           </td>
         </tr>));
     }

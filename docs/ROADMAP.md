@@ -4,6 +4,29 @@ The first approach is to cover utmost redis commands until user made feedback an
 
 To begin only basics commands will be implemented to release an usable tools. The goal is to prioritize features and do not develop useless one. 
 
+## Basics
+
+### Home
+
+|Description|Status|
+|-----------|------|
+|List saved redis database|OK|
+|Add redis database button|OK|
+|Start local redis database|Not analysed| 
+
+#### List saved redis database
+
+|Description|Status|
+|-----------|------|
+||OK|
+
+#### Add redis database
+
+|Description|Status|
+|-----------|------|
+|Basic form without auth|OK|
+|Form with auth|Not analysed| 
+
 ## Redis commands
 
 Exhaustive list of redis commands with it development status.
