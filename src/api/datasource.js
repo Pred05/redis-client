@@ -18,8 +18,8 @@ const datasourceInfoList = {
 
 const datasourceList = {};
 
-function createRedisClient(host, port) {
-  const redisClient = redis.createClient({ host, port });
+function createRedisClient(host, port, password) {
+  const redisClient = redis.createClient({ host, port, password });
   datasourceList[DatasourceUtil.getDatasourceKeyByUrlAndPort(host, port)] = redisClient;
   return redisClient;
 }
@@ -40,8 +40,8 @@ function handlRedisClientEvent(redisClient, mainWindow) {
   });
 }
 
-function addDatasource(mainWindow, name, host, port) {
-  dbDatasources.insert({ key: DatasourceUtil.getDatasourceKeyByUrlAndPort(host, port), name, host, port }, (err, doc) => {
+function addDatasource(mainWindow, name, host, port, password) {
+  dbDatasources.insert({ key: DatasourceUtil.getDatasourceKeyByUrlAndPort(host, port), name, host, port, password }, (err, doc) => {
     if (err) {
       // TODO: handle error
     }
@@ -53,7 +53,7 @@ function addDatasource(mainWindow, name, host, port) {
       datasourceStatus: 'OFF',
     };
 
-    const redisClient = createRedisClient(doc.host, doc.port);
+    const redisClient = createRedisClient(doc.host, doc.port, doc.password);
     handlRedisClientEvent(redisClient, mainWindow);
   });
 }
@@ -91,7 +91,7 @@ module.exports = {
 
     // Datasources events
     ipcMain.on('submitNewDatasource', (evt, args) => {
-      addDatasource(mainWindow, args.name, args.host, args.port);
+      addDatasource(mainWindow, args.name, args.host, args.port, args.password);
     });
 
     ipcMain.on('deleteDatasource', (evt, args) => {

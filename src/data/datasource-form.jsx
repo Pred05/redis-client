@@ -10,6 +10,7 @@ export default class DatasourceForm extends React.Component {
       databaseName: '',
       host: '',
       port: '',
+      password: '',
       error: ''
     };
 
@@ -48,6 +49,7 @@ export default class DatasourceForm extends React.Component {
       name: this.state.databaseName,
       host: this.state.host,
       port: this.state.port,
+      password: this.state.password,
     });
     this.props.history.push('/');
   }
@@ -87,6 +89,18 @@ export default class DatasourceForm extends React.Component {
               <div className="field">
                 <div className="control">
                   <input className="input" name="port" type="text" placeholder="Port" onChange={this.handleChange} />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label" htmlFor="password">Password</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <input className="input" name="password" type="text" placeholder="Password" onChange={this.handleChange} />
                 </div>
               </div>
             </div>
